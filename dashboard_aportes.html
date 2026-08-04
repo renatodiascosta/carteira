@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aportes — Registro 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#0a0e14;
+    --surface:#10151f;
+    --surface-2:#161d2b;
+    --ink:#e6edf3;
+    --muted:#7d8da3;
+    --dim:#4b5a70;
+    --line:#1f2937;
+    --accent:#39d98a;
+    --accent-2:#4aa8ff;
+    --accent-soft:rgba(57,217,138,.16);
+    --neg:#ff6b6b;
+    --warn:#ffb454;
+    --radius:13px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Archivo",system-ui,-apple-system,sans-serif;
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(900px 500px at 85% -10%, rgba(74,168,255,.07), transparent 60%),
+      radial-gradient(700px 500px at 0% 110%, rgba(57,217,138,.06), transparent 55%);
+    background-attachment:fixed;
+    min-height:100vh;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 24px 64px}
+
+  /* ---------- cabeçalho ---------- */
+  header{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;justify-content:space-between;margin-bottom:28px;
+    border-bottom:1px solid var(--line);padding-bottom:22px}
+  .eyebrow{
+    font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);margin:0 0 6px
+  }
+  h1{font-size:26px;font-weight:800;letter-spacing:-.4px;margin:0}
+  .stats{display:flex;gap:28px}
+  .stat .k{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .stat .v{font-family:"Space Mono",monospace;font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)}
+
+  /* ---------- painéis ---------- */
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+  .panel + .panel{margin-top:18px}
+  .panel-head{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .panel-title{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+  button,select{font-family:inherit;font-size:13px;color:var(--ink);background:var(--surface-2);
+    border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  /* ---------- dropdowns ---------- */
+  .filtros{display:flex;flex-wrap:wrap;gap:16px}
+  .campo{flex:1 1 260px;min-width:0}
+  .campo > label{display:block;font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .dd{position:relative}
+  .dd-btn{
+    width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:9px 12px;font-size:14px;text-align:left;border-radius:8px;transition:.18s
+  }
+  .dd-btn:hover{border-color:var(--dim)}
+  .dd-btn[aria-expanded="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft),0 0 22px -8px var(--accent)}
+  .dd-btn .seta{color:var(--muted);font-size:10px;flex:none}
+  .dd-btn .rotulo{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .dd-panel{
+    position:absolute;z-index:20;top:calc(100% + 6px);left:0;right:0;
+    background:var(--surface);border:1px solid var(--line);border-radius:8px;
+    box-shadow:0 12px 28px rgba(0,0,0,.55);
+    max-height:320px;overflow:auto;padding:6px;display:none;
+    scrollbar-color:var(--line) transparent
+  }
+  .dd-panel::-webkit-scrollbar{width:10px}
+  .dd-panel::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;border:3px solid var(--surface)}
+  .dd-panel.aberto{display:block}
+  .opt{
+    width:100%;display:flex;align-items:center;gap:10px;border:0;background:none;color:var(--ink);
+    padding:7px 8px;border-radius:6px;text-align:left;font-size:14px
+  }
+  .opt:hover{background:var(--surface-2)}
+  .opt .marca{
+    flex:none;width:15px;height:15px;border:1.5px solid var(--line);border-radius:4px;
+    display:grid;place-items:center;font-size:10px;color:#08110b;line-height:1
+  }
+  .opt[aria-checked="true"] .marca{background:var(--accent);border-color:var(--accent);box-shadow:0 0 10px -2px var(--accent)}
+  .opt .nome{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .opt .nome.mono{font-family:"Space Mono",monospace;font-size:13px;font-weight:400;letter-spacing:.02em}
+  .opt .val{font-family:"Space Mono",monospace;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;flex:none}
+  .opt.todos{border-bottom:1px solid var(--line);border-radius:6px 6px 0 0;margin-bottom:4px;padding-bottom:9px}
+  .opt.todos .nome{font-weight:700}
+
+  /* ---------- gráfico ---------- */
+  .chart{position:relative}
+  svg{display:block;width:100%;height:auto}
+  .grid{stroke:var(--line);stroke-width:1}
+  .zero{stroke:var(--dim);stroke-width:1}
+  .tick{font-family:"Space Mono",monospace;font-size:11px;fill:var(--dim)}
+  .barlabel{font-family:"Space Mono",monospace;font-size:11px;fill:var(--muted);font-weight:700;font-variant-numeric:tabular-nums}
+  .bar{fill:var(--accent)}
+  .bar.neg{fill:var(--neg)}
+  .hit{fill:transparent;cursor:pointer}
+  .hit:hover + .bar,.hit:focus-visible + .bar{fill-opacity:.78}
+
+  .tip{
+    position:absolute;pointer-events:none;z-index:5;min-width:172px;
+    background:var(--surface-2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 12px;
+    font-size:12px;box-shadow:0 6px 20px rgba(0,0,0,.6);opacity:0;transition:opacity .12s
+  }
+  .tip.on{opacity:1}
+  .tip h4{margin:0 0 6px;font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:400}
+  .tip .row{display:flex;justify-content:space-between;gap:16px;font-family:"Space Mono",monospace;font-variant-numeric:tabular-nums;color:var(--muted)}
+  .tip .row.total{border-top:1px solid var(--line);margin-top:6px;padding-top:6px;font-weight:700;color:var(--accent)}
+
+  .note{font-size:12.5px;color:var(--dim);margin-top:14px}
+  .banner{background:rgba(255,180,84,.07);border:1px solid rgba(255,180,84,.25);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:18px;line-height:1.5}
+  .banner b{font-weight:700;color:#ffd9a0}
+  .banner code{font-family:"Space Mono",monospace;font-size:12px;color:#ffd9a0}
+  .banner input{margin-top:6px;display:block;font-size:12px;color:var(--muted)}
+  .empty{padding:48px 0;text-align:center;color:var(--muted)}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media (max-width:640px){
+    .wrap{padding:20px 14px 48px}
+    .stats{gap:18px}
+    header{gap:14px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="banner"></div>
+
+  <header>
+    <div>
+      <!-- <p class="eyebrow">Registro 2026 · aba Aportes</p> -->
+      <h1>Aportes por mês</h1>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">Total</div><div class="v" id="s-total">—</div></div>
+      <div class="stat"><div class="k">Média / mês</div><div class="v" id="s-media">—</div></div>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="filtros">
+      <div class="campo">
+        <label id="lb-ativo">Ativo</label>
+        <div class="dd" id="dd-ativo"></div>
+      </div>
+      <div class="campo">
+        <label id="lb-setor">Setor</label>
+        <div class="dd" id="dd-setor"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <span class="panel-title">Valor aportado (R$)</span>
+      <span class="panel-title" id="periodo"></span>
+    </div>
+    <div class="chart" id="chart"></div>
+    <p class="note" id="note"></p>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // Snapshot embutido: usado só se os .json não puderem ser lidos (ex.: abrir o
+  // arquivo direto por file://). Servindo a pasta por HTTP, os .json vencem.
+  var SNAPSHOT_APORTES = [{"ticker":"CMIN3","data":"2026-01-02","quantidade":10,"preco_medio":5.32},{"ticker":"PETR4","data":"2026-01-02","quantidade":2,"preco_medio":30.45},{"ticker":"CMIN3","data":"2026-01-02","quantidade":10,"preco_medio":5.29},{"ticker":"PETR4","data":"2026-01-02","quantidade":2,"preco_medio":28.53},{"ticker":"BBAS3","data":"2026-01-02","quantidade":1,"preco_medio":21.68},{"ticker":"PETR4","data":"2026-01-05","quantidade":2,"preco_medio":30.44},{"ticker":"PETR4","data":"2026-01-05","quantidade":2,"preco_medio":29.96},{"ticker":"PETR4","data":"2026-01-05","quantidade":2,"preco_medio":29.87},{"ticker":"CMIN3","data":"2026-01-05","quantidade":8,"preco_medio":5.35},{"ticker":"PETR4","data":"2026-01-06","quantidade":2,"preco_medio":30.26},{"ticker":"PETR4","data":"2026-01-06","quantidade":2,"preco_medio":30.23},{"ticker":"CMIN3","data":"2026-01-06","quantidade":8,"preco_medio":5.41},{"ticker":"MELK3","data":"2026-01-06","quantidade":10,"preco_medio":3.8},{"ticker":"PETR4","data":"2026-01-06","quantidade":2,"preco_medio":29.15},{"ticker":"MCDC34","data":"2026-01-06","quantidade":1,"preco_medio":81.55},{"ticker":"PGCO34","data":"2026-01-06","quantidade":1,"preco_medio":53.82},{"ticker":"COCA34","data":"2026-01-06","quantidade":1,"preco_medio":60.87},{"ticker":"COLG34","data":"2026-01-06","quantidade":1,"preco_medio":59.12},{"ticker":"PETR4","data":"2026-01-06","quantidade":2,"preco_medio":29.67},{"ticker":"MELK3","data":"2026-01-06","quantidade":10,"preco_medio":3.73},{"ticker":"PETR4","data":"2026-01-07","quantidade":2,"preco_medio":29.57},{"ticker":"MELK3","data":"2026-01-07","quantidade":10,"preco_medio":3.71},{"ticker":"MELK3","data":"2026-01-07","quantidade":10,"preco_medio":3.68},{"ticker":"CMIG4","data":"2026-01-08","quantidade":3,"preco_medio":10.98},{"ticker":"BBSE3","data":"2026-01-08","quantidade":1,"preco_medio":30.12},{"ticker":"MELK3","data":"2026-01-08","quantidade":10,"preco_medio":3.7},{"ticker":"CMIG4","data":"2026-01-09","quantidade":3,"preco_medio":10.98},{"ticker":"CMIG4","data":"2026-01-12","quantidade":4,"preco_medio":10.94},{"ticker":"CMIG4","data":"2026-01-12","quantidade":4,"preco_medio":10.93},{"ticker":"CMIG4","data":"2026-01-12","quantidade":4,"preco_medio":10.94},{"ticker":"CMIG4","data":"2026-01-13","quantidade":4,"preco_medio":10.89},{"ticker":"MELK3","data":"2026-01-13","quantidade":10,"preco_medio":3.66},{"ticker":"CMIG4","data":"2026-01-13","quantidade":4,"preco_medio":10.78},{"ticker":"CMIG4","data":"2026-01-13","quantidade":4,"preco_medio":10.75},{"ticker":"CMIG4","data":"2026-01-13","quantidade":4,"preco_medio":10.7},{"ticker":"CMIG4","data":"2026-01-14","quantidade":4,"preco_medio":10.69},{"ticker":"MELK3","data":"2026-01-14","quantidade":10,"preco_medio":3.64},{"ticker":"BBAS3","data":"2026-01-16","quantidade":2,"preco_medio":21.46},{"ticker":"CMIG4","data":"2026-01-16","quantidade":4,"preco_medio":10.69},{"ticker":"BBAS3","data":"2026-01-19","quantidade":2,"preco_medio":21.4},{"ticker":"POMO3","data":"2026-01-19","quantidade":10,"preco_medio":5.53},{"ticker":"MELK3","data":"2026-01-19","quantidade":10,"preco_medio":3.62},{"ticker":"CMIG4","data":"2026-01-19","quantidade":4,"preco_medio":10.78},{"ticker":"CMIG4","data":"2026-01-20","quantidade":4,"preco_medio":10.76},{"ticker":"BBAS3","data":"2026-01-20","quantidade":2,"preco_medio":21.16},{"ticker":"MELK3","data":"2026-01-20","quantidade":10,"preco_medio":3.6},{"ticker":"CMIG4","data":"2026-01-20","quantidade":4,"preco_medio":10.78},{"ticker":"BBAS3","data":"2026-01-21","quantidade":2,"preco_medio":19.9},{"ticker":"CMIG4","data":"2026-01-21","quantidade":4,"preco_medio":11.05},{"ticker":"BBAS3","data":"2026-01-21","quantidade":2,"preco_medio":19.85},{"ticker":"BBAS3","data":"2026-01-21","quantidade":3,"preco_medio":19.72},{"ticker":"BBAS3","data":"2026-01-22","quantidade":2,"preco_medio":20.23},{"ticker":"BBAS3","data":"2026-01-22","quantidade":4,"preco_medio":18.77},{"ticker":"BBAS3","data":"2026-01-22","quantidade":4,"preco_medio":19.92},{"ticker":"BBSE3","data":"2026-01-23","quantidade":12,"preco_medio":27.3},{"ticker":"POMO3","data":"2026-01-26","quantidade":5,"preco_medio":6.05},{"ticker":"POMO3","data":"2026-01-27","quantidade":15,"preco_medio":6.08},{"ticker":"BBAS3","data":"2026-01-27","quantidade":2,"preco_medio":18.93},{"ticker":"POMO3","data":"2026-01-27","quantidade":15,"preco_medio":6.1},{"ticker":"POMO3","data":"2026-01-28","quantidade":10,"preco_medio":6.23},{"ticker":"BBAS3","data":"2026-01-29","quantidade":2,"preco_medio":20.78},{"ticker":"BBAS3","data":"2026-01-29","quantidade":2,"preco_medio":19.86},{"ticker":"POMO3","data":"2026-01-29","quantidade":10,"preco_medio":6.09},{"ticker":"POMO3","data":"2026-01-30","quantidade":10,"preco_medio":6.04},{"ticker":"COIN11","data":"2026-02-02","quantidade":1,"preco_medio":54.62},{"ticker":"COIN11","data":"2026-02-02","quantidade":1,"preco_medio":54.49},{"ticker":"COIN11","data":"2026-02-02","quantidade":1,"preco_medio":54.72},{"ticker":"POMO3","data":"2026-02-02","quantidade":10,"preco_medio":6.11},{"ticker":"VULC3","data":"2026-02-02","quantidade":3,"preco_medio":18.17},{"ticker":"COIN11","data":"2026-02-02","quantidade":1,"preco_medio":54.56},{"ticker":"COIN11","data":"2026-02-02","quantidade":1,"preco_medio":54.3},{"ticker":"COIN11","data":"2026-02-03","quantidade":1,"preco_medio":54.26},{"ticker":"COIN11","data":"2026-02-03","quantidade":1,"preco_medio":53.93},{"ticker":"COIN11","data":"2026-02-03","quantidade":1,"preco_medio":53.34},{"ticker":"COIN11","data":"2026-02-03","quantidade":1,"preco_medio":52.0},{"ticker":"VULC3","data":"2026-02-03","quantidade":2,"preco_medio":18.08},{"ticker":"VULC3","data":"2026-02-04","quantidade":3,"preco_medio":17.95},{"ticker":"COIN11","data":"2026-02-04","quantidade":1,"preco_medio":52.6},{"ticker":"POMO3","data":"2026-02-04","quantidade":10,"preco_medio":5.94},{"ticker":"POMO3","data":"2026-02-04","quantidade":10,"preco_medio":5.85},{"ticker":"COIN11","data":"2026-02-05","quantidade":1,"preco_medio":46.81},{"ticker":"VULC3","data":"2026-02-05","quantidade":3,"preco_medio":17.93},{"ticker":"POMO3","data":"2026-02-06","quantidade":10,"preco_medio":5.8},{"ticker":"VULC3","data":"2026-02-06","quantidade":3,"preco_medio":17.48},{"ticker":"VULC3","data":"2026-02-06","quantidade":3,"preco_medio":17.35},{"ticker":"POMO3","data":"2026-02-09","quantidade":10,"preco_medio":5.95},{"ticker":"VULC3","data":"2026-02-09","quantidade":3,"preco_medio":17.51},{"ticker":"COIN11","data":"2026-02-09","quantidade":1,"preco_medio":48.64},{"ticker":"COIN11","data":"2026-02-10","quantidade":1,"preco_medio":47.97},{"ticker":"VULC3","data":"2026-02-10","quantidade":3,"preco_medio":17.72},{"ticker":"VULC3","data":"2026-02-10","quantidade":3,"preco_medio":17.93},{"ticker":"VULC3","data":"2026-02-11","quantidade":3,"preco_medio":17.89},{"ticker":"VULC3","data":"2026-02-12","quantidade":3,"preco_medio":17.92},{"ticker":"POMO3","data":"2026-02-12","quantidade":10,"preco_medio":6.03},{"ticker":"BBSE3","data":"2026-02-13","quantidade":1,"preco_medio":33.91},{"ticker":"BBSE3","data":"2026-02-13","quantidade":2,"preco_medio":33.92},{"ticker":"CMIN3","data":"2026-02-13","quantidade":8,"preco_medio":5.46},{"ticker":"VULC3","data":"2026-02-13","quantidade":3,"preco_medio":17.63},{"ticker":"BBSE3","data":"2026-02-13","quantidade":2,"preco_medio":33.4},{"ticker":"BBSE3","data":"2026-02-13","quantidade":2,"preco_medio":30.97},{"ticker":"CMIN3","data":"2026-02-13","quantidade":8,"preco_medio":5.44},{"ticker":"COIN11","data":"2026-02-13","quantidade":1,"preco_medio":47.88},{"ticker":"CMIN3","data":"2026-02-18","quantidade":8,"preco_medio":5.46},{"ticker":"BBSE3","data":"2026-02-18","quantidade":2,"preco_medio":33.66},{"ticker":"CMIN3","data":"2026-02-19","quantidade":8,"preco_medio":5.35},{"ticker":"CMIN3","data":"2026-02-19","quantidade":8,"preco_medio":5.31},{"ticker":"BBSE3","data":"2026-02-19","quantidade":2,"preco_medio":33.57},{"ticker":"CMIN3","data":"2026-02-20","quantidade":8,"preco_medio":5.3},{"ticker":"CMIN3","data":"2026-02-20","quantidade":8,"preco_medio":5.27},{"ticker":"CMIN3","data":"2026-02-20","quantidade":8,"preco_medio":5.28},{"ticker":"CMIN3","data":"2026-02-23","quantidade":8,"preco_medio":5.36},{"ticker":"CMIN3","data":"2026-02-26","quantidade":5,"preco_medio":5.47},{"ticker":"CMIN3","data":"2026-02-27","quantidade":5,"preco_medio":5.47},{"ticker":"CMIN3","data":"2026-02-27","quantidade":5,"preco_medio":5.49},{"ticker":"CMIN3","data":"2026-02-27","quantidade":5,"preco_medio":5.47},{"ticker":"CMIN3","data":"2026-03-02","quantidade":5,"preco_medio":5.43},{"ticker":"COIN11","data":"2026-03-02","quantidade":1,"preco_medio":44.48},{"ticker":"CMIN3","data":"2026-03-02","quantidade":5,"preco_medio":5.42},{"ticker":"CMIN3","data":"2026-03-02","quantidade":5,"preco_medio":5.4},{"ticker":"BMGB4","data":"2026-03-02","quantidade":33,"preco_medio":4.35},{"ticker":"CMIN3","data":"2026-03-03","quantidade":5,"preco_medio":5.28},{"ticker":"BBSE3","data":"2026-03-03","quantidade":1,"preco_medio":34.01},{"ticker":"VULC3","data":"2026-03-03","quantidade":2,"preco_medio":17.87},{"ticker":"CMIN3","data":"2026-03-03","quantidade":5,"preco_medio":5.31},{"ticker":"POMO3","data":"2026-03-03","quantidade":5,"preco_medio":6.05},{"ticker":"CMIN3","data":"2026-03-04","quantidade":5,"preco_medio":5.31},{"ticker":"CMIN3","data":"2026-03-04","quantidade":5,"preco_medio":5.31},{"ticker":"CMIN3","data":"2026-03-04","quantidade":5,"preco_medio":5.31},{"ticker":"CMIN3","data":"2026-03-05","quantidade":5,"preco_medio":5.29},{"ticker":"CMIN3","data":"2026-03-05","quantidade":5,"preco_medio":5.27},{"ticker":"CMIN3","data":"2026-03-05","quantidade":5,"preco_medio":5.21},{"ticker":"BBSE3","data":"2026-03-06","quantidade":1,"preco_medio":33.81},{"ticker":"CMIN3","data":"2026-03-06","quantidade":5,"preco_medio":5.17},{"ticker":"VULC3","data":"2026-03-06","quantidade":1,"preco_medio":17.74},{"ticker":"CMIN3","data":"2026-03-06","quantidade":5,"preco_medio":5.11},{"ticker":"VULC3","data":"2026-03-09","quantidade":2,"preco_medio":16.73},{"ticker":"CMIN3","data":"2026-03-09","quantidade":5,"preco_medio":5.07},{"ticker":"BBSE3","data":"2026-03-09","quantidade":1,"preco_medio":33.81},{"ticker":"MELK3","data":"2026-03-09","quantidade":5,"preco_medio":3.68},{"ticker":"POMO3","data":"2026-03-09","quantidade":5,"preco_medio":5.9},{"ticker":"COIN11","data":"2026-03-10","quantidade":1,"preco_medio":46.25},{"ticker":"VULC3","data":"2026-03-10","quantidade":2,"preco_medio":17.23},{"ticker":"COIN11","data":"2026-03-11","quantidade":1,"preco_medio":46.46},{"ticker":"CMIN3","data":"2026-03-11","quantidade":5,"preco_medio":5.26},{"ticker":"CMIN3","data":"2026-03-12","quantidade":8,"preco_medio":5.16},{"ticker":"VULC3","data":"2026-03-12","quantidade":2,"preco_medio":16.76},{"ticker":"CMIN3","data":"2026-03-12","quantidade":5,"preco_medio":5.13},{"ticker":"VULC3","data":"2026-03-12","quantidade":2,"preco_medio":16.51},{"ticker":"CMIN3","data":"2026-03-13","quantidade":8,"preco_medio":4.97},{"ticker":"CMIN3","data":"2026-03-13","quantidade":5,"preco_medio":4.92},{"ticker":"CMIN3","data":"2026-03-13","quantidade":5,"preco_medio":4.91},{"ticker":"CMIN3","data":"2026-03-13","quantidade":5,"preco_medio":4.85},{"ticker":"CMIN3","data":"2026-03-16","quantidade":8,"preco_medio":4.87},{"ticker":"VULC3","data":"2026-03-16","quantidade":2,"preco_medio":16.81},{"ticker":"CMIN3","data":"2026-03-16","quantidade":8,"preco_medio":4.87},{"ticker":"CMIN3","data":"2026-03-16","quantidade":5,"preco_medio":4.84},{"ticker":"CMIN3","data":"2026-03-17","quantidade":8,"preco_medio":4.97},{"ticker":"CMIN3","data":"2026-03-18","quantidade":8,"preco_medio":4.91},{"ticker":"VULC3","data":"2026-03-18","quantidade":2,"preco_medio":16.52},{"ticker":"COIN11","data":"2026-03-18","quantidade":1,"preco_medio":46.9},{"ticker":"MELK3","data":"2026-03-18","quantidade":5,"preco_medio":3.67},{"ticker":"CMIN3","data":"2026-03-18","quantidade":8,"preco_medio":4.84},{"ticker":"CMIN3","data":"2026-03-19","quantidade":8,"preco_medio":4.59},{"ticker":"VULC3","data":"2026-03-19","quantidade":3,"preco_medio":16.01},{"ticker":"CMIN3","data":"2026-03-19","quantidade":8,"preco_medio":4.85},{"ticker":"POMO3","data":"2026-03-19","quantidade":5,"preco_medio":5.46},{"ticker":"CMIN3","data":"2026-03-20","quantidade":8,"preco_medio":4.8},{"ticker":"MELK3","data":"2026-03-20","quantidade":10,"preco_medio":3.53},{"ticker":"BBSE3","data":"2026-03-20","quantidade":1,"preco_medio":29.11},{"ticker":"CMIN3","data":"2026-03-20","quantidade":5,"preco_medio":4.76},{"ticker":"CMIN3","data":"2026-03-23","quantidade":8,"preco_medio":4.87},{"ticker":"VULC3","data":"2026-03-23","quantidade":4,"preco_medio":16.4},{"ticker":"CMIN3","data":"2026-03-23","quantidade":8,"preco_medio":4.86},{"ticker":"CMIN3","data":"2026-03-23","quantidade":8,"preco_medio":4.9},{"ticker":"MELK3","data":"2026-03-24","quantidade":10,"preco_medio":3.49},{"ticker":"CMIN3","data":"2026-03-24","quantidade":8,"preco_medio":4.93},{"ticker":"COIN11","data":"2026-03-24","quantidade":1,"preco_medio":46.3},{"ticker":"COIN11","data":"2026-03-25","quantidade":1,"preco_medio":46.66},{"ticker":"MELK3","data":"2026-03-25","quantidade":10,"preco_medio":3.46},{"ticker":"CMIN3","data":"2026-03-26","quantidade":8,"preco_medio":4.95},{"ticker":"BBSE3","data":"2026-03-26","quantidade":2,"preco_medio":29.9},{"ticker":"BBAS3","data":"2026-03-26","quantidade":3,"preco_medio":19.03},{"ticker":"CMIN3","data":"2026-03-26","quantidade":8,"preco_medio":4.9},{"ticker":"CMIN3","data":"2026-03-27","quantidade":8,"preco_medio":4.89},{"ticker":"COIN11","data":"2026-03-27","quantidade":1,"preco_medio":44.18},{"ticker":"MELK3","data":"2026-03-27","quantidade":10,"preco_medio":3.38},{"ticker":"BBSE3","data":"2026-03-27","quantidade":1,"preco_medio":28.14},{"ticker":"BBAS3","data":"2026-03-27","quantidade":2,"preco_medio":16.84},{"ticker":"BBSE3","data":"2026-03-27","quantidade":2,"preco_medio":29.56},{"ticker":"BBSE3","data":"2026-03-27","quantidade":3,"preco_medio":29.78},{"ticker":"ITSA4","data":"2026-03-27","quantidade":2,"preco_medio":12.72},{"ticker":"CMIN3","data":"2026-03-30","quantidade":8,"preco_medio":4.89},{"ticker":"COIN11","data":"2026-03-30","quantidade":1,"preco_medio":45.11},{"ticker":"BBSE3","data":"2026-03-30","quantidade":3,"preco_medio":29.07},{"ticker":"BBSE3","data":"2026-03-31","quantidade":3,"preco_medio":29.67},{"ticker":"CMIN3","data":"2026-03-31","quantidade":8,"preco_medio":4.91},{"ticker":"BBAS3","data":"2026-03-31","quantidade":2,"preco_medio":18.65},{"ticker":"CMIN3","data":"2026-04-01","quantidade":16,"preco_medio":4.96},{"ticker":"COIN11","data":"2026-04-01","quantidade":1,"preco_medio":45.14},{"ticker":"CMIN3","data":"2026-04-02","quantidade":8,"preco_medio":4.86},{"ticker":"COIN11","data":"2026-04-02","quantidade":1,"preco_medio":43.78},{"ticker":"BBAS3","data":"2026-04-02","quantidade":2,"preco_medio":17.39},{"ticker":"CMIN3","data":"2026-04-06","quantidade":8,"preco_medio":4.92},{"ticker":"BBSE3","data":"2026-04-07","quantidade":2,"preco_medio":27.19},{"ticker":"CMIN3","data":"2026-04-07","quantidade":8,"preco_medio":4.88},{"ticker":"MELK3","data":"2026-04-07","quantidade":10,"preco_medio":3.45},{"ticker":"VULC3","data":"2026-04-07","quantidade":-5,"preco_medio":16.92},{"ticker":"ALOS3","data":"2026-04-07","quantidade":5,"preco_medio":30.4},{"ticker":"MCDC34","data":"2026-04-09","quantidade":1,"preco_medio":77.7},{"ticker":"VULC3","data":"2026-04-09","quantidade":-52,"preco_medio":17.38},{"ticker":"CMIN3","data":"2026-04-09","quantidade":42,"preco_medio":5.09},{"ticker":"COIN11","data":"2026-04-09","quantidade":2,"preco_medio":46.1},{"ticker":"MELK3","data":"2026-04-09","quantidade":29,"preco_medio":3.5},{"ticker":"BBAS3","data":"2026-04-10","quantidade":2,"preco_medio":19.9},{"ticker":"MELK3","data":"2026-04-10","quantidade":10,"preco_medio":3.54},{"ticker":"CMIN3","data":"2026-04-10","quantidade":5,"preco_medio":5.05},{"ticker":"BBSE3","data":"2026-04-13","quantidade":2,"preco_medio":29.97},{"ticker":"MCDC34","data":"2026-04-13","quantidade":1,"preco_medio":76.43},{"ticker":"BBDC4","data":"2026-04-13","quantidade":2,"preco_medio":14.4},{"ticker":"CMIN3","data":"2026-04-13","quantidade":5,"preco_medio":5.01},{"ticker":"CMIN3","data":"2026-04-13","quantidade":5,"preco_medio":5.02},{"ticker":"CMIN3","data":"2026-04-14","quantidade":5,"preco_medio":5.01},{"ticker":"CMIN3","data":"2026-04-16","quantidade":5,"preco_medio":4.98},{"ticker":"MELK3","data":"2026-04-20","quantidade":10,"preco_medio":3.6},{"ticker":"CMIN3","data":"2026-04-22","quantidade":8,"preco_medio":4.99},{"ticker":"MCDC34","data":"2026-04-22","quantidade":1,"preco_medio":75.18},{"ticker":"MELK3","data":"2026-04-22","quantidade":10,"preco_medio":3.57},{"ticker":"PGCO34","data":"2026-04-22","quantidade":1,"preco_medio":51.08},{"ticker":"CASA11","data":"2026-04-23","quantidade":1,"preco_medio":85.59},{"ticker":"CASA11","data":"2026-04-23","quantidade":1,"preco_medio":84.85},{"ticker":"CMIN3","data":"2026-04-23","quantidade":5,"preco_medio":4.88},{"ticker":"BBSE3","data":"2026-04-23","quantidade":1,"preco_medio":34.47},{"ticker":"CMIN3","data":"2026-04-24","quantidade":8,"preco_medio":4.73},{"ticker":"KLBN11","data":"2026-04-24","quantidade":2,"preco_medio":17.9},{"ticker":"BBSE3","data":"2026-04-24","quantidade":1,"preco_medio":33.99},{"ticker":"CMIN3","data":"2026-04-27","quantidade":8,"preco_medio":4.79},{"ticker":"KLBN11","data":"2026-04-27","quantidade":2,"preco_medio":17.96},{"ticker":"MCDC34","data":"2026-04-27","quantidade":1,"preco_medio":74.38},{"ticker":"CASA11","data":"2026-04-27","quantidade":1,"preco_medio":85.08},{"ticker":"CMIN3","data":"2026-04-27","quantidade":8,"preco_medio":4.74},{"ticker":"MCDC34","data":"2026-04-27","quantidade":1,"preco_medio":73.06},{"ticker":"BBSE3","data":"2026-04-28","quantidade":2,"preco_medio":34.01},{"ticker":"CMIN3","data":"2026-04-28","quantidade":8,"preco_medio":4.7},{"ticker":"MELK3","data":"2026-04-28","quantidade":10,"preco_medio":3.46},{"ticker":"BBSE3","data":"2026-04-29","quantidade":1,"preco_medio":33.94},{"ticker":"CMIN3","data":"2026-04-29","quantidade":8,"preco_medio":4.64},{"ticker":"KLBN11","data":"2026-04-29","quantidade":2,"preco_medio":17.89},{"ticker":"MCDC34","data":"2026-04-29","quantidade":1,"preco_medio":72.77},{"ticker":"BBAS3","data":"2026-04-29","quantidade":2,"preco_medio":22.04},{"ticker":"BBSE3","data":"2026-04-29","quantidade":1,"preco_medio":33.9},{"ticker":"BBSE3","data":"2026-04-30","quantidade":2,"preco_medio":33.99},{"ticker":"BBAS3","data":"2026-04-30","quantidade":2,"preco_medio":22.08},{"ticker":"CASA11","data":"2026-04-30","quantidade":1,"preco_medio":85.06},{"ticker":"CMIN3","data":"2026-04-30","quantidade":8,"preco_medio":4.65},{"ticker":"KLBN11","data":"2026-04-30","quantidade":2,"preco_medio":17.7},{"ticker":"MELK3","data":"2026-04-30","quantidade":10,"preco_medio":3.39},{"ticker":"BBAS3","data":"2026-04-30","quantidade":2,"preco_medio":22.17},{"ticker":"CMIN3","data":"2026-05-04","quantidade":8,"preco_medio":4.65},{"ticker":"KLBN11","data":"2026-05-04","quantidade":2,"preco_medio":17.56},{"ticker":"MCDC34","data":"2026-05-04","quantidade":1,"preco_medio":71.55},{"ticker":"CASA11","data":"2026-05-04","quantidade":1,"preco_medio":84.74},{"ticker":"CMIN3","data":"2026-05-05","quantidade":8,"preco_medio":4.61},{"ticker":"CASA11","data":"2026-05-05","quantidade":1,"preco_medio":84.12},{"ticker":"BBAS3","data":"2026-05-05","quantidade":2,"preco_medio":22.04},{"ticker":"KLBN11","data":"2026-05-06","quantidade":2,"preco_medio":17.13},{"ticker":"BBAS3","data":"2026-05-07","quantidade":2,"preco_medio":21.98},{"ticker":"CMIG4","data":"2026-05-07","quantidade":2,"preco_medio":11.95},{"ticker":"KLBN11","data":"2026-05-07","quantidade":2,"preco_medio":17.19},{"ticker":"MCDC34","data":"2026-05-07","quantidade":1,"preco_medio":69.24},{"ticker":"CMIG4","data":"2026-05-07","quantidade":2,"preco_medio":11.76},{"ticker":"CMIG4","data":"2026-05-08","quantidade":2,"preco_medio":11.78},{"ticker":"CASA11","data":"2026-05-08","quantidade":1,"preco_medio":84.64},{"ticker":"MELK3","data":"2026-05-08","quantidade":10,"preco_medio":3.32},{"ticker":"MCDC34","data":"2026-05-08","quantidade":1,"preco_medio":68.84},{"ticker":"BBAS3","data":"2026-05-11","quantidade":2,"preco_medio":21.77},{"ticker":"CMIG4","data":"2026-05-11","quantidade":2,"preco_medio":11.65},{"ticker":"MELK3","data":"2026-05-11","quantidade":10,"preco_medio":3.23},{"ticker":"ALOS3","data":"2026-05-11","quantidade":1,"preco_medio":29.94},{"ticker":"KLBN11","data":"2026-05-11","quantidade":2,"preco_medio":17.07},{"ticker":"MCDC34","data":"2026-05-11","quantidade":1,"preco_medio":66.75},{"ticker":"ALOS3","data":"2026-05-12","quantidade":2,"preco_medio":29.63},{"ticker":"BBAS3","data":"2026-05-12","quantidade":2,"preco_medio":21.54},{"ticker":"MELK3","data":"2026-05-12","quantidade":10,"preco_medio":3.2},{"ticker":"CMIG4","data":"2026-05-12","quantidade":2,"preco_medio":11.46},{"ticker":"KLBN11","data":"2026-05-12","quantidade":2,"preco_medio":16.86},{"ticker":"ALOS3","data":"2026-05-13","quantidade":2,"preco_medio":29.25},{"ticker":"BBAS3","data":"2026-05-13","quantidade":2,"preco_medio":21.3},{"ticker":"CMIG4","data":"2026-05-13","quantidade":2,"preco_medio":11.39},{"ticker":"KLBN11","data":"2026-05-13","quantidade":2,"preco_medio":16.8},{"ticker":"TAEE11","data":"2026-05-13","quantidade":1,"preco_medio":38.83},{"ticker":"BBAS3","data":"2026-05-14","quantidade":2,"preco_medio":20.85},{"ticker":"ALOS3","data":"2026-05-14","quantidade":2,"preco_medio":28.84},{"ticker":"BBAS3","data":"2026-05-15","quantidade":2,"preco_medio":20.38},{"ticker":"CMIG4","data":"2026-05-15","quantidade":2,"preco_medio":11.19},{"ticker":"TAEE11","data":"2026-05-15","quantidade":1,"preco_medio":38.13},{"ticker":"KLBN11","data":"2026-05-15","quantidade":2,"preco_medio":16.65},{"ticker":"BBSE3","data":"2026-05-15","quantidade":2,"preco_medio":34.16},{"ticker":"BBSE3","data":"2026-05-15","quantidade":2,"preco_medio":34.17},{"ticker":"CMIN3","data":"2026-05-15","quantidade":8,"preco_medio":4.72},{"ticker":"CMIN3","data":"2026-05-18","quantidade":8,"preco_medio":4.63},{"ticker":"KLBN11","data":"2026-05-18","quantidade":3,"preco_medio":16.43},{"ticker":"ALOS3","data":"2026-05-18","quantidade":2,"preco_medio":28.52},{"ticker":"BBSE3","data":"2026-05-18","quantidade":2,"preco_medio":34.03},{"ticker":"CMIN3","data":"2026-05-18","quantidade":8,"preco_medio":4.56},{"ticker":"ALOS3","data":"2026-05-19","quantidade":2,"preco_medio":28.12},{"ticker":"BBAS3","data":"2026-05-19","quantidade":2,"preco_medio":20.18},{"ticker":"BBSE3","data":"2026-05-19","quantidade":2,"preco_medio":33.97},{"ticker":"CMIN3","data":"2026-05-19","quantidade":8,"preco_medio":4.22},{"ticker":"KLBN11","data":"2026-05-19","quantidade":2,"preco_medio":16.25},{"ticker":"MELK3","data":"2026-05-19","quantidade":10,"preco_medio":3.15},{"ticker":"CMIN3","data":"2026-05-19","quantidade":8,"preco_medio":4.13},{"ticker":"KLBN11","data":"2026-05-20","quantidade":2,"preco_medio":16.47},{"ticker":"BBSE3","data":"2026-05-20","quantidade":2,"preco_medio":34.78},{"ticker":"KLBN11","data":"2026-05-21","quantidade":2,"preco_medio":16.53},{"ticker":"BBAS3","data":"2026-05-21","quantidade":2,"preco_medio":20.92},{"ticker":"CMIG4","data":"2026-05-21","quantidade":3,"preco_medio":11.41},{"ticker":"BBSE3","data":"2026-05-22","quantidade":2,"preco_medio":34.43},{"ticker":"CMIG4","data":"2026-05-22","quantidade":3,"preco_medio":11.27},{"ticker":"KLBN11","data":"2026-05-22","quantidade":2,"preco_medio":16.45},{"ticker":"ALOS3","data":"2026-05-22","quantidade":2,"preco_medio":28.34},{"ticker":"CMIN3","data":"2026-05-25","quantidade":8,"preco_medio":4.46},{"ticker":"BBSE3","data":"2026-05-25","quantidade":3,"preco_medio":34.61},{"ticker":"ALOS3","data":"2026-05-26","quantidade":2,"preco_medio":28.29},{"ticker":"BBSE3","data":"2026-05-26","quantidade":2,"preco_medio":34.51},{"ticker":"CMIG4","data":"2026-05-26","quantidade":3,"preco_medio":11.2},{"ticker":"KLBN11","data":"2026-05-26","quantidade":2,"preco_medio":16.61},{"ticker":"BBSE3","data":"2026-05-26","quantidade":2,"preco_medio":34.57},{"ticker":"CMIG4","data":"2026-05-27","quantidade":3,"preco_medio":11.17},{"ticker":"CMIG4","data":"2026-05-27","quantidade":3,"preco_medio":11.21},{"ticker":"BBAS3","data":"2026-05-28","quantidade":2,"preco_medio":20.97},{"ticker":"CMIG4","data":"2026-05-28","quantidade":3,"preco_medio":11.17},{"ticker":"CMIG4","data":"2026-05-28","quantidade":3,"preco_medio":11.07},{"ticker":"MELK3","data":"2026-05-28","quantidade":10,"preco_medio":3.31},{"ticker":"CMIG4","data":"2026-05-29","quantidade":3,"preco_medio":11.01},{"ticker":"BBAS3","data":"2026-05-29","quantidade":2,"preco_medio":20.49},{"ticker":"ALOS3","data":"2026-05-29","quantidade":2,"preco_medio":28.3},{"ticker":"CMIG4","data":"2026-06-01","quantidade":3,"preco_medio":10.98},{"ticker":"CMIG4","data":"2026-06-01","quantidade":3,"preco_medio":10.74},{"ticker":"ALOS3","data":"2026-06-01","quantidade":2,"preco_medio":27.89},{"ticker":"KLBN11","data":"2026-06-01","quantidade":2,"preco_medio":16.58},{"ticker":"CASA11","data":"2026-06-01","quantidade":1,"preco_medio":84.27},{"ticker":"BBAS3","data":"2026-06-02","quantidade":2,"preco_medio":20.14},{"ticker":"ALOS3","data":"2026-06-02","quantidade":2,"preco_medio":27.77},{"ticker":"COIN11","data":"2026-06-02","quantidade":1,"preco_medio":42.47},{"ticker":"POMO3","data":"2026-06-02","quantidade":5,"preco_medio":5.82},{"ticker":"CASA11","data":"2026-06-02","quantidade":1,"preco_medio":83.86},{"ticker":"BBAS3","data":"2026-06-02","quantidade":2,"preco_medio":20.0},{"ticker":"ALOS3","data":"2026-06-03","quantidade":2,"preco_medio":27.13},{"ticker":"BBAS3","data":"2026-06-03","quantidade":2,"preco_medio":19.63},{"ticker":"POMO3","data":"2026-06-03","quantidade":5,"preco_medio":28.65},{"ticker":"MELK3","data":"2026-06-03","quantidade":10,"preco_medio":3.17},{"ticker":"BBAS3","data":"2026-06-03","quantidade":2,"preco_medio":19.51},{"ticker":"COIN11","data":"2026-06-05","quantidade":1,"preco_medio":40.05},{"ticker":"BBAS3","data":"2026-06-05","quantidade":2,"preco_medio":19.47},{"ticker":"MELK3","data":"2026-06-05","quantidade":10,"preco_medio":3.17},{"ticker":"BBAS3","data":"2026-06-05","quantidade":2,"preco_medio":19.37},{"ticker":"ALOS3","data":"2026-06-05","quantidade":2,"preco_medio":27.08},{"ticker":"COIN11","data":"2026-06-05","quantidade":1,"preco_medio":38.46},{"ticker":"BBAS3","data":"2026-06-08","quantidade":2,"preco_medio":19.18},{"ticker":"CMIG4","data":"2026-06-08","quantidade":3,"preco_medio":10.88},{"ticker":"MELK3","data":"2026-06-08","quantidade":10,"preco_medio":3.18},{"ticker":"ALOS3","data":"2026-06-08","quantidade":2,"preco_medio":26.87},{"ticker":"CMIG4","data":"2026-06-08","quantidade":3,"preco_medio":10.85},{"ticker":"ITSA4","data":"2026-06-08","quantidade":3,"preco_medio":12.48},{"ticker":"CMIG4","data":"2026-06-08","quantidade":3,"preco_medio":10.77},{"ticker":"ALOS3","data":"2026-06-09","quantidade":2,"preco_medio":26.88},{"ticker":"BBAS3","data":"2026-06-09","quantidade":2,"preco_medio":19.23},{"ticker":"MELK3","data":"2026-06-09","quantidade":10,"preco_medio":3.17},{"ticker":"POMO3","data":"2026-06-09","quantidade":5,"preco_medio":5.79},{"ticker":"ALOS3","data":"2026-06-10","quantidade":2,"preco_medio":26.58},{"ticker":"BBAS3","data":"2026-06-10","quantidade":2,"preco_medio":18.99},{"ticker":"CMIG4","data":"2026-06-10","quantidade":3,"preco_medio":10.7},{"ticker":"ITSA4","data":"2026-06-10","quantidade":3,"preco_medio":12.43},{"ticker":"BBAS3","data":"2026-06-11","quantidade":2,"preco_medio":19.0},{"ticker":"ALOS3","data":"2026-06-11","quantidade":2,"preco_medio":26.55},{"ticker":"CMIG4","data":"2026-06-11","quantidade":3,"preco_medio":10.72},{"ticker":"CMIN3","data":"2026-06-11","quantidade":8,"preco_medio":4.31},{"ticker":"CMIN3","data":"2026-06-12","quantidade":8,"preco_medio":4.35},{"ticker":"CMIG4","data":"2026-06-12","quantidade":3,"preco_medio":10.8},{"ticker":"MELK3","data":"2026-06-15","quantidade":10,"preco_medio":3.18},{"ticker":"CMIG4","data":"2026-06-15","quantidade":3,"preco_medio":10.78},{"ticker":"ALOS3","data":"2026-06-15","quantidade":2,"preco_medio":26.9},{"ticker":"CMIG4","data":"2026-06-15","quantidade":3,"preco_medio":10.75},{"ticker":"ALOS3","data":"2026-06-16","quantidade":2,"preco_medio":26.27},{"ticker":"CMIG4","data":"2026-06-16","quantidade":3,"preco_medio":10.67},{"ticker":"CMIG4","data":"2026-06-16","quantidade":3,"preco_medio":10.65},{"ticker":"POMO3","data":"2026-06-16","quantidade":5,"preco_medio":5.66},{"ticker":"COIN11","data":"2026-06-17","quantidade":1,"preco_medio":39.64},{"ticker":"BBAS3","data":"2026-06-17","quantidade":2,"preco_medio":19.61},{"ticker":"BBAS3","data":"2026-06-17","quantidade":2,"preco_medio":19.61},{"ticker":"BBAS3","data":"2026-06-17","quantidade":2,"preco_medio":19.58},{"ticker":"BBAS3","data":"2026-06-18","quantidade":2,"preco_medio":19.38},{"ticker":"CMIG4","data":"2026-06-18","quantidade":3,"preco_medio":10.66},{"ticker":"CMIN3","data":"2026-06-18","quantidade":8,"preco_medio":4.28},{"ticker":"CMIN3","data":"2026-06-19","quantidade":8,"preco_medio":4.24},{"ticker":"COIN11","data":"2026-06-19","quantidade":1,"preco_medio":38.82},{"ticker":"BBAS3","data":"2026-06-19","quantidade":2,"preco_medio":19.53},{"ticker":"CMIG4","data":"2026-06-19","quantidade":3,"preco_medio":10.75},{"ticker":"CMIG4","data":"2026-06-22","quantidade":3,"preco_medio":10.75},{"ticker":"BBAS3","data":"2026-06-22","quantidade":2,"preco_medio":19.66},{"ticker":"CMIN3","data":"2026-06-22","quantidade":8,"preco_medio":4.32},{"ticker":"POMO3","data":"2026-06-22","quantidade":5,"preco_medio":5.71},{"ticker":"BBAS3","data":"2026-06-23","quantidade":2,"preco_medio":19.43},{"ticker":"COIN11","data":"2026-06-23","quantidade":1,"preco_medio":38.77},{"ticker":"POMO3","data":"2026-06-23","quantidade":5,"preco_medio":5.62},{"ticker":"POMO3","data":"2026-06-24","quantidade":5,"preco_medio":5.58},{"ticker":"CMIG4","data":"2026-06-24","quantidade":3,"preco_medio":10.79},{"ticker":"COIN11","data":"2026-06-24","quantidade":1,"preco_medio":38.46},{"ticker":"COIN11","data":"2026-06-24","quantidade":1,"preco_medio":37.16},{"ticker":"CMIG4","data":"2026-06-25","quantidade":3,"preco_medio":10.78},{"ticker":"CMIN3","data":"2026-06-25","quantidade":8,"preco_medio":4.27},{"ticker":"COIN11","data":"2026-06-25","quantidade":1,"preco_medio":37.67},{"ticker":"CMIG4","data":"2026-06-26","quantidade":3,"preco_medio":10.79},{"ticker":"COIN11","data":"2026-06-26","quantidade":1,"preco_medio":36.6},{"ticker":"POMO3","data":"2026-06-26","quantidade":5,"preco_medio":5.46},{"ticker":"CMIN3","data":"2026-06-29","quantidade":8,"preco_medio":4.28},{"ticker":"POMO3","data":"2026-06-29","quantidade":5,"preco_medio":5.53},{"ticker":"COIN11","data":"2026-06-29","quantidade":1,"preco_medio":37.55},{"ticker":"CMIN3","data":"2026-06-29","quantidade":8,"preco_medio":4.2},{"ticker":"CMIN3","data":"2026-06-30","quantidade":8,"preco_medio":4.13},{"ticker":"CMIG4","data":"2026-06-30","quantidade":3,"preco_medio":10.85},{"ticker":"COIN11","data":"2026-06-30","quantidade":1,"preco_medio":36.86},{"ticker":"KLBN11","data":"2026-06-30","quantidade":2,"preco_medio":16.72},{"ticker":"KLBN11","data":"2026-06-30","quantidade":2,"preco_medio":16.78},{"ticker":"KLBN11","data":"2026-06-30","quantidade":2,"preco_medio":16.79},{"ticker":"CMIG4","data":"2026-07-01","quantidade":3,"preco_medio":10.77},{"ticker":"KLBN11","data":"2026-07-01","quantidade":2,"preco_medio":16.68},{"ticker":"MELK3","data":"2026-07-01","quantidade":10,"preco_medio":3.22},{"ticker":"BBAS3","data":"2026-07-02","quantidade":2,"preco_medio":19.79},{"ticker":"POMO3","data":"2026-07-02","quantidade":5,"preco_medio":5.54},{"ticker":"MELK3","data":"2026-07-03","quantidade":10,"preco_medio":3.23},{"ticker":"POMO3","data":"2026-07-03","quantidade":5,"preco_medio":5.59},{"ticker":"CMIN3","data":"2026-07-06","quantidade":8,"preco_medio":4.29},{"ticker":"POMO3","data":"2026-07-06","quantidade":5,"preco_medio":5.47},{"ticker":"MELK3","data":"2026-07-06","quantidade":10,"preco_medio":3.18},{"ticker":"BBAS3","data":"2026-07-06","quantidade":2,"preco_medio":19.68},{"ticker":"POMO3","data":"2026-07-06","quantidade":5,"preco_medio":5.38},{"ticker":"MELK3","data":"2026-07-06","quantidade":10,"preco_medio":3.14},{"ticker":"BBAS3","data":"2026-07-07","quantidade":2,"preco_medio":19.83},{"ticker":"MELK3","data":"2026-07-07","quantidade":10,"preco_medio":3.13},{"ticker":"POMO3","data":"2026-07-07","quantidade":5,"preco_medio":5.26},{"ticker":"BBAS3","data":"2026-07-08","quantidade":2,"preco_medio":19.5},{"ticker":"MELK3","data":"2026-07-08","quantidade":10,"preco_medio":3.12},{"ticker":"POMO3","data":"2026-07-08","quantidade":5,"preco_medio":5.19},{"ticker":"ALOS3","data":"2026-07-08","quantidade":2,"preco_medio":26.66},{"ticker":"BBAS3","data":"2026-07-08","quantidade":2,"preco_medio":19.49},{"ticker":"MELK3","data":"2026-07-09","quantidade":10,"preco_medio":3.12},{"ticker":"POMO3","data":"2026-07-09","quantidade":5,"preco_medio":5.26},{"ticker":"BBAS3","data":"2026-07-13","quantidade":1,"preco_medio":14.38},{"ticker":"POMO3","data":"2026-07-13","quantidade":5,"preco_medio":5.32},{"ticker":"POMO3","data":"2026-07-13","quantidade":5,"preco_medio":5.27},{"ticker":"MELK3","data":"2026-07-14","quantidade":10,"preco_medio":3.18},{"ticker":"POMO3","data":"2026-07-14","quantidade":5,"preco_medio":5.26},{"ticker":"MELK3","data":"2026-07-15","quantidade":10,"preco_medio":3.09},{"ticker":"POMO3","data":"2026-07-15","quantidade":5,"preco_medio":5.17},{"ticker":"POMO3","data":"2026-07-15","quantidade":1,"preco_medio":5.06},{"ticker":"MELK3","data":"2026-07-15","quantidade":10,"preco_medio":3.02},{"ticker":"MCDC34","data":"2026-07-15","quantidade":1,"preco_medio":67.73},{"ticker":"POMO3","data":"2026-07-17","quantidade":5,"preco_medio":4.85},{"ticker":"MELK3","data":"2026-07-17","quantidade":10,"preco_medio":3.03},{"ticker":"POMO3","data":"2026-07-17","quantidade":5,"preco_medio":5.01},{"ticker":"ALOS3","data":"2026-07-17","quantidade":2,"preco_medio":27.38},{"ticker":"POMO3","data":"2026-07-17","quantidade":5,"preco_medio":4.89},{"ticker":"MELK3","data":"2026-07-17","quantidade":10,"preco_medio":3.01},{"ticker":"MELK3","data":"2026-07-20","quantidade":10,"preco_medio":3.0},{"ticker":"POMO3","data":"2026-07-20","quantidade":5,"preco_medio":4.84},{"ticker":"CMIG4","data":"2026-07-21","quantidade":2,"preco_medio":10.99},{"ticker":"MELK3","data":"2026-07-21","quantidade":10,"preco_medio":2.95},{"ticker":"POMO3","data":"2026-07-21","quantidade":5,"preco_medio":4.65},{"ticker":"ALOS3","data":"2026-07-21","quantidade":2,"preco_medio":26.87},{"ticker":"MCDC34","data":"2026-07-22","quantidade":1,"preco_medio":66.74},{"ticker":"MELK3","data":"2026-07-22","quantidade":10,"preco_medio":2.94},{"ticker":"MELK3","data":"2026-07-23","quantidade":10,"preco_medio":2.93},{"ticker":"ALOS3","data":"2026-07-23","quantidade":2,"preco_medio":26.95},{"ticker":"ALOS3","data":"2026-07-24","quantidade":2,"preco_medio":26.37},{"ticker":"MELK3","data":"2026-07-24","quantidade":10,"preco_medio":2.9},{"ticker":"ALOS3","data":"2026-07-27","quantidade":2,"preco_medio":26.58},{"ticker":"POMO3","data":"2026-07-28","quantidade":5,"preco_medio":4.93},{"ticker":"MELK3","data":"2026-07-28","quantidade":10,"preco_medio":2.93},{"ticker":"ALOS3","data":"2026-07-29","quantidade":2,"preco_medio":26.63},{"ticker":"ISAE4","data":"2026-07-29","quantidade":2,"preco_medio":26.54},{"ticker":"MELK3","data":"2026-07-29","quantidade":10,"preco_medio":2.88},{"ticker":"COCA34","data":"2026-07-29","quantidade":-1,"preco_medio":77.02},{"ticker":"ALOS3","data":"2026-07-29","quantidade":3,"preco_medio":26.65},{"ticker":"TAEE11","data":"2026-07-29","quantidade":1,"preco_medio":39.13},{"ticker":"ISAE4","data":"2026-07-30","quantidade":2,"preco_medio":26.34},{"ticker":"COIN11","data":"2026-07-31","quantidade":1,"preco_medio":37.58}];
+  var SNAPSHOT_SETORES = [{"ticker":"ALOS3","setor":"Imóveis"},{"ticker":"BBAS3","setor":"Bancário"},{"ticker":"BBDC4","setor":"Bancário"},{"ticker":"BBSE3","setor":"Seguros"},{"ticker":"BMGB4","setor":"Bancário"},{"ticker":"BRAP4","setor":"Holding"},{"ticker":"CASA11","setor":"ETF de REITs"},{"ticker":"CMIG4","setor":"Energia"},{"ticker":"CMIN3","setor":"Mineração"},{"ticker":"COCA34","setor":"Bebidas"},{"ticker":"COIN11","setor":"ETF de Bitcoin"},{"ticker":"COLG34","setor":"Uso pessoal"},{"ticker":"CXSE3","setor":"Seguros"},{"ticker":"ISAE4","setor":"Energia"},{"ticker":"ITSA4","setor":"Holding"},{"ticker":"JHSF3","setor":"Imobiliário"},{"ticker":"KLBN11","setor":"Celulose"},{"ticker":"MCDC34","setor":"Fast food"},{"ticker":"MELK3","setor":"Construção"},{"ticker":"PETR4","setor":"Petróleo"},{"ticker":"POMO3","setor":"Material de transporte"},{"ticker":"PGCO34","setor":"Uso pessoal"},{"ticker":"TAEE11","setor":"Energia"},{"ticker":"VBBR3","setor":"Energia"},{"ticker":"VULC3","setor":"Calçados"}];
+
+  var brl = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
+  var brlCurto = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",notation:"compact",maximumFractionDigits:1});
+  var MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+  var SEM_SETOR = "Sem setor";
+
+  var estado = {
+    aportes: [],
+    setorDe: {},        // ticker -> setor
+    setoresSel: new Set(),
+    ativosSel: new Set(),
+    fonte: "snapshot"
+  };
+
+  // ---------------------------------------------------------------- dados
+  function normalizar(linhas){
+    return linhas.map(function(a){
+      var d = String(a.data || "");
+      var ano, mes;
+      if (/^\d{4}-\d{2}/.test(d)) { ano = +d.slice(0,4); mes = +d.slice(5,7); }
+      else if (/^\d{2}\/\d{2}\/\d{4}/.test(d)) { ano = +d.slice(6,10); mes = +d.slice(3,5); }
+      else { var p = new Date(d); ano = p.getFullYear(); mes = p.getMonth()+1; }
+      return {
+        ticker: String(a.ticker || "").toUpperCase(),
+        chave: ano + "-" + String(mes).padStart(2,"0"),
+        ano: ano, mes: mes,
+        valor: (Number(a.quantidade)||0) * (Number(a.preco_medio)||0)
+      };
+    }).filter(function(a){ return a.ticker && a.ano; });
+  }
+
+  function carregar(){
+    if (typeof fetch !== "function"){
+      estado.fonte = "snapshot";
+      return Promise.resolve([SNAPSHOT_APORTES, SNAPSHOT_SETORES]);
+    }
+    return Promise.all([
+      fetch("aportes_acoes.json").then(function(r){ if(!r.ok) throw 0; return r.json(); }),
+      fetch("acoes_e_setores.json").then(function(r){ return r.ok ? r.json() : []; }).catch(function(){ return []; })
+    ]).then(function(res){
+      estado.fonte = "arquivo";
+      return res;
+    }).catch(function(){
+      estado.fonte = "snapshot";
+      return [SNAPSHOT_APORTES, SNAPSHOT_SETORES];
+    });
+  }
+
+  function aplicar(aportesRaw, setoresRaw){
+    var lista = Array.isArray(aportesRaw) ? aportesRaw : (aportesRaw.aportes || []);
+    var setores = Array.isArray(setoresRaw) ? setoresRaw : (setoresRaw.ativos || []);
+    estado.aportes = normalizar(lista);
+    estado.setorDe = {};
+    setores.forEach(function(s){
+      if (s && s.ticker) estado.setorDe[String(s.ticker).toUpperCase()] = (s.setor || "").trim() || SEM_SETOR;
+    });
+    todosAtivos().forEach(function(t){
+      if (!estado.setorDe[t]) estado.setorDe[t] = SEM_SETOR;
+    });
+    estado.setoresSel = new Set(todosSetores());
+    estado.ativosSel = new Set(todosAtivos());
+  }
+
+  var _totais = null;
+  function totalPorTicker(){
+    if (_totais) return _totais;
+    var t = {};
+    estado.aportes.forEach(function(a){ t[a.ticker] = (t[a.ticker]||0) + a.valor; });
+    return (_totais = t);
+  }
+
+  function todosAtivos(){                                  // ordenados por valor aportado
+    var t = totalPorTicker();
+    return Object.keys(t).sort(function(x,y){ return t[y]-t[x]; });
+  }
+
+  function todosSetores(){
+    var vistos = {};
+    todosAtivos().forEach(function(a){ vistos[estado.setorDe[a] || SEM_SETOR] = true; });
+    return Object.keys(vistos).sort(function(a,b){ return a.localeCompare(b,"pt-BR"); });
+  }
+
+  function ativosDoSetor(){                                // ativos habilitados pelo filtro de setor
+    return todosAtivos().filter(function(t){ return estado.setoresSel.has(estado.setorDe[t]); });
+  }
+
+  function ativosVisiveis(){                               // o que de fato vai ao gráfico
+    return ativosDoSetor().filter(function(t){ return estado.ativosSel.has(t); });
+  }
+
+  // Eixo X: sempre todos os meses do arquivo, independente do filtro
+  function todosOsMeses(){
+    if (!estado.aportes.length) return [];
+    var min = null, max = null;
+    estado.aportes.forEach(function(a){
+      var n = a.ano*12 + a.mes;
+      if (min === null || n < min) min = n;
+      if (max === null || n > max) max = n;
+    });
+    var out = [];
+    for (var n = min; n <= max; n++){
+      var ano = Math.floor((n-1)/12), mes = ((n-1)%12)+1;
+      out.push({
+        chave: ano + "-" + String(mes).padStart(2,"0"),
+        rotulo: MESES[mes-1] + "/" + String(ano).slice(2)
+      });
+    }
+    return out;
+  }
+
+  function serie(){
+    var sel = new Set(ativosVisiveis());
+    var mapa = {};
+    estado.aportes.forEach(function(a){
+      if (!sel.has(a.ticker)) return;
+      var m = mapa[a.chave] || (mapa[a.chave] = {total:0, porTicker:{}});
+      m.total += a.valor;
+      m.porTicker[a.ticker] = (m.porTicker[a.ticker]||0) + a.valor;
+    });
+    return todosOsMeses().map(function(m){
+      var d = mapa[m.chave] || {total:0, porTicker:{}};
+      return {chave:m.chave, rotulo:m.rotulo, total:d.total, porTicker:d.porTicker};
+    });
+  }
+
+  // ---------------------------------------------------------------- dropdown
+  function criarDropdown(cfg){
+    // cfg: {alvo, rotuladoPor, itens(), estaMarcado(v), alternar(v), marcarTodos(b), plural, mono}
+    var raiz = cfg.alvo;
+    raiz.innerHTML =
+      '<button class="dd-btn" type="button" aria-expanded="false" aria-haspopup="true">' +
+        '<span class="rotulo"></span><span class="seta">▾</span></button>' +
+      '<div class="dd-panel" role="group"></div>';
+    var btn = raiz.querySelector(".dd-btn");
+    var painel = raiz.querySelector(".dd-panel");
+
+    function fechar(){ painel.classList.remove("aberto"); btn.setAttribute("aria-expanded","false"); }
+    function abrir(){ painel.classList.add("aberto"); btn.setAttribute("aria-expanded","true"); }
+
+    btn.addEventListener("click", function(){
+      painel.classList.contains("aberto") ? fechar() : abrir();
+    });
+    document.addEventListener("click", function(ev){
+      if (!raiz.contains(ev.target)) fechar();
+    });
+    raiz.addEventListener("keydown", function(ev){
+      if (ev.key === "Escape"){ fechar(); btn.focus(); }
+    });
+
+    function pintar(){
+      var itens = cfg.itens();
+      var marcados = itens.filter(cfg.estaMarcado);
+      var todos = itens.length > 0 && marcados.length === itens.length;
+
+      btn.querySelector(".rotulo").textContent =
+        todos ? "Todos" :
+        marcados.length === 0 ? "Nenhum" :
+        marcados.length === 1 ? marcados[0] :
+        marcados.length + " " + cfg.plural;
+
+      var html = '<button class="opt todos" type="button" role="checkbox" aria-checked="'+todos+'" data-todos="1">' +
+                 '<span class="marca">'+(todos?"✓":"")+'</span><span class="nome">Todos</span>' +
+                 '<span class="val">'+itens.length+'</span></button>';
+      html += itens.map(function(v){
+        var on = cfg.estaMarcado(v);
+        return '<button class="opt" type="button" role="checkbox" aria-checked="'+on+'" data-v="'+v.replace(/"/g,"&quot;")+'">' +
+               '<span class="marca">'+(on?"✓":"")+'</span>' +
+               '<span class="nome'+(cfg.mono?" mono":"")+'">'+v+'</span>' +
+               '<span class="val">'+cfg.valor(v)+'</span></button>';
+      }).join("");
+      painel.innerHTML = html;
+
+      painel.querySelectorAll(".opt").forEach(function(o){
+        o.addEventListener("click", function(){
+          if (o.dataset.todos) cfg.marcarTodos(!todos);
+          else cfg.alternar(o.dataset.v);
+          atualizar();
+        });
+      });
+    }
+
+    return {pintar:pintar, fechar:fechar};
+  }
+
+  var ddSetor, ddAtivo;
+
+  function montarDropdowns(){
+    ddSetor = criarDropdown({
+      alvo: document.getElementById("dd-setor"),
+      plural: "setores",
+      mono: false,
+      itens: todosSetores,
+      valor: function(s){
+        var n = todosAtivos().filter(function(t){ return estado.setorDe[t] === s; }).length;
+        return n + (n === 1 ? " ativo" : " ativos");
+      },
+      estaMarcado: function(s){ return estado.setoresSel.has(s); },
+      alternar: function(s){
+        estado.setoresSel.has(s) ? estado.setoresSel.delete(s) : estado.setoresSel.add(s);
+        estado.ativosSel = new Set(ativosDoSetor());   // ao mudar o setor, marca tudo que sobrou
+      },
+      marcarTodos: function(ligar){
+        estado.setoresSel = ligar ? new Set(todosSetores()) : new Set();
+        estado.ativosSel = new Set(ativosDoSetor());
+      }
+    });
+
+    ddAtivo = criarDropdown({
+      alvo: document.getElementById("dd-ativo"),
+      plural: "ativos",
+      mono: true,
+      itens: ativosDoSetor,
+      valor: function(t){ return brlCurto.format(totalPorTicker()[t]); },
+      estaMarcado: function(t){ return estado.ativosSel.has(t); },
+      alternar: function(t){
+        estado.ativosSel.has(t) ? estado.ativosSel.delete(t) : estado.ativosSel.add(t);
+      },
+      marcarTodos: function(ligar){
+        estado.ativosSel = ligar ? new Set(ativosDoSetor()) : new Set();
+      }
+    });
+  }
+
+  // ---------------------------------------------------------------- gráfico
+  function passoBonito(bruto){
+    var mag = Math.pow(10, Math.floor(Math.log10(bruto)));
+    var n = bruto/mag;
+    return (n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*mag;
+  }
+
+  function desenharGrafico(dados){
+    var el = document.getElementById("chart");
+    if (!dados.length){
+      el.innerHTML = '<p class="empty">Sem dados para exibir.</p>';
+      return;
+    }
+    var W = 900, H = 380, ml = 76, mr = 16, mt = 26, mb = 42;
+    var iw = W-ml-mr, ih = H-mt-mb;
+
+    var maxV = Math.max(0, Math.max.apply(null, dados.map(function(d){return d.total;})));
+    var minV = Math.min(0, Math.min.apply(null, dados.map(function(d){return d.total;})));
+    var passo = passoBonito(Math.max(1,(maxV-minV))/4);
+    var topo = Math.ceil(maxV/passo)*passo || passo;
+    var base = Math.floor(minV/passo)*passo;
+    var y = function(v){ return mt + ih - (v-base)/(topo-base)*ih; };
+
+    var banda = iw/dados.length;
+    var bw = Math.min(64, banda*0.56);
+    var rotula = dados.length <= 14;   // com muitos meses, o valor sobre a barra vira ruído
+
+    var svg = ['<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Valor aportado por mês">'];
+    for (var v = base; v <= topo+1e-6; v += passo){
+      svg.push('<line class="'+(Math.abs(v)<1e-6?'zero':'grid')+'" x1="'+ml+'" x2="'+(W-mr)+'" y1="'+y(v).toFixed(1)+'" y2="'+y(v).toFixed(1)+'"/>');
+      svg.push('<text class="tick" x="'+(ml-10)+'" y="'+(y(v)+4).toFixed(1)+'" text-anchor="end">'+brlCurto.format(v)+'</text>');
+    }
+    dados.forEach(function(d,i){
+      var cx = ml + banda*i + banda/2;
+      var y0 = y(0), y1 = y(d.total);
+      var alt = Math.max(Math.abs(y1-y0), d.total===0?0:1.5);
+      var top = Math.min(y0,y1);
+      svg.push('<rect class="hit" data-i="'+i+'" tabindex="0" x="'+(cx-banda/2)+'" y="'+mt+'" width="'+banda+'" height="'+ih+'"/>');
+      svg.push('<rect class="bar'+(d.total<0?' neg':'')+'" x="'+(cx-bw/2).toFixed(1)+'" y="'+top.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+alt.toFixed(1)+'" rx="2"/>');
+      if (rotula && d.total !== 0){
+        var ly = d.total >= 0 ? top-8 : top+alt+15;
+        svg.push('<text class="barlabel" x="'+cx.toFixed(1)+'" y="'+ly.toFixed(1)+'" text-anchor="middle">'+brlCurto.format(d.total)+'</text>');
+      }
+      svg.push('<text class="tick" x="'+cx.toFixed(1)+'" y="'+(H-mb+22)+'" text-anchor="middle">'+d.rotulo+'</text>');
+    });
+    svg.push('</svg><div class="tip" id="tip"></div>');
+    el.innerHTML = svg.join("");
+
+    var tip = document.getElementById("tip");
+    el.querySelectorAll(".hit").forEach(function(hit){
+      function mostrar(ev){
+        var d = dados[+hit.dataset.i];
+        var itens = Object.keys(d.porTicker).map(function(t){ return {t:t, v:d.porTicker[t]}; })
+                     .sort(function(a,b){ return Math.abs(b.v)-Math.abs(a.v); });
+        var html = '<h4>'+d.rotulo+'</h4>';
+        if (!itens.length){
+          html += '<div class="row"><span>sem aporte</span><span>'+brl.format(0)+'</span></div>';
+        } else {
+          var visiveis = itens.slice(0,6), resto = itens.slice(6);
+          visiveis.forEach(function(i){ html += '<div class="row"><span>'+i.t+'</span><span>'+brl.format(i.v)+'</span></div>'; });
+          if (resto.length){
+            var soma = resto.reduce(function(s,i){ return s+i.v; },0);
+            html += '<div class="row"><span>+'+resto.length+' outros</span><span>'+brl.format(soma)+'</span></div>';
+          }
+          html += '<div class="row total"><span>Total</span><span>'+brl.format(d.total)+'</span></div>';
+        }
+        tip.innerHTML = html;
+        tip.classList.add("on");
+        var caixa = el.getBoundingClientRect();
+        var px = (ev && ev.clientX !== undefined) ? ev.clientX - caixa.left : hit.getBoundingClientRect().left - caixa.left;
+        var py = (ev && ev.clientY !== undefined) ? ev.clientY - caixa.top : 40;
+        tip.style.left = Math.min(Math.max(px+14, 0), caixa.width - tip.offsetWidth - 4) + "px";
+        tip.style.top  = Math.max(py - tip.offsetHeight - 12, 0) + "px";
+      }
+      hit.addEventListener("mousemove", mostrar);
+      hit.addEventListener("focus", mostrar);
+      hit.addEventListener("mouseleave", function(){ tip.classList.remove("on"); });
+      hit.addEventListener("blur", function(){ tip.classList.remove("on"); });
+    });
+  }
+
+  // ---------------------------------------------------------------- ciclo
+  function atualizar(){
+    ddSetor.pintar();
+    ddAtivo.pintar();
+
+    var dados = serie();
+    var total = dados.reduce(function(s,d){ return s+d.total; },0);
+    var comAporte = dados.filter(function(d){ return d.total !== 0; }).length;
+
+    document.getElementById("s-total").textContent  = brl.format(total);
+    document.getElementById("s-media").textContent  = comAporte ? brl.format(total/comAporte) : "—";
+    document.getElementById("periodo").textContent  = dados.length ? dados[0].rotulo + " — " + dados[dados.length-1].rotulo : "";
+
+    var negativos = estado.aportes.filter(function(a){
+      return estado.ativosSel.has(a.ticker) && estado.setoresSel.has(estado.setorDe[a.ticker]) && a.valor < 0;
+    }).length;
+    // document.getElementById("note").textContent =
+    //   "Cada barra é a soma de quantidade × preço médio no mês; o eixo X mostra todos os meses do arquivo, inclusive os sem aporte do filtro atual." +
+    //   (negativos ? " " + negativos + " lançamento(s) com quantidade negativa entram como saída e reduzem a barra." : "");
+
+    desenharGrafico(dados);
+  }
+
+  function bannerSnapshot(){
+    if (estado.fonte === "arquivo") return;
+    document.getElementById("banner").innerHTML =
+      '<div class="banner"><b>Mostrando uma cópia dos dados embutida no arquivo.</b> ' +
+      'Para ler o aportes.json atual, sirva a pasta por HTTP (<code>python -m http.server 8000</code>) ' +
+      'e abra <code>http://localhost:8000/dashboard.html</code> — ou escolha o arquivo aqui:' +
+      '<input type="file" id="upload" accept=".json"></div>';
+    document.getElementById("upload").addEventListener("change", function(ev){
+      var f = ev.target.files[0];
+      if (!f) return;
+      var fr = new FileReader();
+      fr.onload = function(){
+        try {
+          var setoresAtuais = Object.keys(estado.setorDe).map(function(t){
+            return {ticker:t, setor:estado.setorDe[t]};
+          });
+          _totais = null;
+          aplicar(JSON.parse(fr.result), setoresAtuais);
+          document.getElementById("banner").innerHTML = "";
+          atualizar();
+        } catch(e){
+          alert("Não consegui ler esse JSON: " + e.message);
+        }
+      };
+      fr.readAsText(f);
+    });
+  }
+
+  carregar().then(function(res){
+    aplicar(res[0], res[1]);
+    bannerSnapshot();
+    montarDropdowns();
+    atualizar();
+  });
+})();
+</script>
+</body>
+</html>
